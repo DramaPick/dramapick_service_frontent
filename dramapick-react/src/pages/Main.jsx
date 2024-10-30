@@ -7,12 +7,6 @@ import uploadIcon from "../assets/upload_icon.png";
 const Main = () => {
     const inputEl = useRef(null);
     const [fileName, setFileName] = useState("");
-    const fileInputHandler = useCallback((event) => {
-        const files = event.target && event.target.files;
-        if (files && files[0]) {
-        setFileName(event.target.files[0].name);
-        }
-    }, []);
     const [videoFile, setVideoFile] = useState(null);
     const [videoUrl, setVideoUrl] = useState('');
     const [dramaTitle, setDramaTitle] = useState('');
@@ -20,10 +14,13 @@ const Main = () => {
 
 
     const handleFileChange = useCallback ((e)=> {
-        setVideoFile(e.target.files[0]);
         const files = e.target && e.target.files;
         if (files && files[0]) {
             setFileName(e.target.files[0].name);
+            setVideoFile(e.target.files[0]);
+        } else {
+            setVideoFile(null);
+            setFileName('');
         }
     }, []);
 
@@ -86,12 +83,12 @@ const Main = () => {
     useEffect(() => {
         const currentInputEl = inputEl.current;
         if (currentInputEl !== null) {
-            currentInputEl.addEventListener("input", fileInputHandler);
+            currentInputEl.addEventListener("input", handleFileChange);
         }
         return () => {
-            currentInputEl && currentInputEl.removeEventListener("input", fileInputHandler);
+            currentInputEl && currentInputEl.removeEventListener("input", handleFileChange);
         };
-    }, [inputEl, fileInputHandler]);
+    }, [inputEl, handleFileChange]);
 
 
     // 모든 비디오 형식 수용(accept)
