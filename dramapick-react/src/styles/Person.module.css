@@ -1,0 +1,28 @@
+.person_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: solid;
+    border-color: red;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.person_container p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    font-weight: bold;
+
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.profile_image {
+    width: 100%;
+    height: auto;
+    max-width: 200px;
+    object-fit: cover;
+}

@@ -1,5 +1,9 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Person from "../components/Person";
+import Button from "../components/Button";
+import profile from "../assets/person_profile_test.png";
+import styles from "../styles/PSelection.module.css";
 
 const PSelection = () => {
     const location = useLocation();
@@ -19,9 +23,9 @@ const PSelection = () => {
     };
 
     return (
-        <div>
+        <div className={styles.pselection_div}>
             <h2>쇼츠 생성을 원하는 인물을 선택해주세요.</h2>
-            <div>
+            <div className={styles.video_div}>
                 {videoUrl ? (
                     <iframe
                         width="560"
@@ -40,10 +44,11 @@ const PSelection = () => {
                     <p>재생할 비디오가 없습니다.</p>
                 )}
             </div>
-            <div>
-                <h2>인물 선택 부분 #컴포넌트 예정</h2>
+            <div className={styles.profiles_div}>
+                <Person name="김수현" imgSrc={profile}></Person>
+                <Person name="김수현" imgSrc={profile}></Person>
             </div>
-            <button>선택 완료</button>
+            <Button text="선택 완료"></Button>
         </div>
     );
 };

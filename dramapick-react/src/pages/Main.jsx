@@ -1,8 +1,9 @@
 import React, {useRef, useEffect, useCallback, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "./Main.module.css";
+import styles from "../styles/Main.module.css";
 import uploadIcon from "../assets/upload_icon.png";
+import Button from "../components/Button";
 
 const Main = () => {
     const inputEl = useRef(null);
@@ -114,9 +115,7 @@ const Main = () => {
                 <input type="text" value={dramaTitle} onChange={handleTitleChange} placeholder="드라마 제목을 입력해주세요." required />
             </div>
             {error && <p style={{color:'red'}}>{error}</p>}
-            <div className={styles.buttondiv}>
-                <button onClick={handleSubmit}>업로드</button>
-            </div>
+            <Button onClick={handleSubmit} text="업로드"></Button>
         </div>
     );
 }
