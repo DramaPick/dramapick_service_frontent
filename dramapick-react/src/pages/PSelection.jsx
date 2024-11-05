@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
 import profile from "../assets/person_profile_test.png";
 import styles from "../styles/PSelection.module.css";
+import axios from "axios";
 
 const PSelection = () => {
     const location = useLocation();
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const postVideoId = "1";
+
     useEffect(() => {
         console.log(location);
     }, [location])
@@ -20,6 +24,36 @@ const PSelection = () => {
             return `https://www.youtube.com/embed/${videoId}`;
         }
         return url; // YouTube가 아닐 경우 원래 URL 반환
+    };
+
+    const handleCompleteSelection = () => {
+        console.log("선택된 사용자들:", selectedUsers);
+
+        const data = {
+            users: selectedUsers,
+        };
+
+        axios
+            .post(`http://127.0.0.1:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => {
+                console.log("서버 응답:", response.data);
+            })
+            .catch((error) => {
+                console.error("서버 요청 오류:", error.response.data);
+            });
+    };
+
+    // Person 컴포넌트에서 전달된 선택 상태를 부모에서 처리
+    const handleSelectUser = (name, imgSrc, isSelected) => {
+        if (isSelected) { // 체크되었을 때 해당 사용자 추가
+            setSelectedUsers((prev) => [...prev, { name, imgSrc }]);
+        } else { // 체크 해제되었을 때 해당 사용자 제거
+            setSelectedUsers((prev) => prev.filter(user => user.name !== name));
+        }
     };
 
     return (
@@ -45,10 +79,17 @@ const PSelection = () => {
                 )}
             </div>
             <div className={styles.profiles_div}>
-                <Person name="김수현" imgSrc={profile}></Person>
-                <Person name="김수현" imgSrc={profile}></Person>
+                <Person name="김수현1" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현2" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현3" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현4" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현5" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현6" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현7" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현8" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="김수현9" imgSrc={profile} onSelect={handleSelectUser} ></Person>
             </div>
-            <Button text="선택 완료"></Button>
+            <Button text="선택 완료" onClick={handleCompleteSelection}></Button>
         </div>
     );
 };
