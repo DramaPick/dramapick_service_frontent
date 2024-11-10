@@ -57,7 +57,7 @@ const Main = () => {
 
         const formData = new FormData();
         if (videoFile) {
-            formData.append('videoFile', videoFile);
+            formData.append('file', videoFile);
         }
         if (videoUrl) {
             formData.append('videoUrl', videoUrl);
@@ -65,10 +65,11 @@ const Main = () => {
         formData.append('dramaTitle', dramaTitle);
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/users/upload', formData, {
+            const response = await axios.post('http://127.0.0.1:8000/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                maxRedirects: 0,
             });
             console.log('Response from server:', response.data)
 

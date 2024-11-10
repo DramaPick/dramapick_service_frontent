@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
 import profile from "../assets/person_profile_test.png";
@@ -26,6 +26,8 @@ const PSelection = () => {
         return url; // YouTube가 아닐 경우 원래 URL 반환
     };
 
+    const navigate = useNavigate();
+
     const handleCompleteSelection = () => {
         console.log("선택된 사용자들:", selectedUsers);
 
@@ -41,6 +43,7 @@ const PSelection = () => {
             })
             .then((response) => {
                 console.log("서버 응답:", response.data);
+                navigate('/shorts');
             })
             .catch((error) => {
                 console.error("서버 요청 오류:", error.response.data);
