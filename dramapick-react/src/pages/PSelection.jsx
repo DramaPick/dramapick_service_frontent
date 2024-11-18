@@ -19,6 +19,7 @@ const PSelection = () => {
     const [taskId, setTaskId] = useState("");
     const [status, setStatus] = useState("");
 
+
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
         if (location.state) {
@@ -32,13 +33,6 @@ const PSelection = () => {
     }, [location.state]); // location.state가 바뀔 때마다 실행
 
     console.log("status: " + status + ", task_id: " + taskId + ", s3_url: " + s3Url + ", drama_title: " + dramaTitle);
-
-    /*console.log("video_file: ", location.state.video_file);
-    console.log("video_url: ", location.state.video_url);
-    console.log("drama_title: ", location.state.drama_title);
-    console.log("task_id: ", location.state.task_id);
-    console.log("status: ", location.state.status);
-    console.log("s3_url: ", location.state.s3_url);*/
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
