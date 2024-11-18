@@ -1,0 +1,31 @@
+.main_div {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.main_div h2 {
+    width: 80%;
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+.container{
+    background-color: white;
+
+    width: 80%;
+    height: 75%;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 30px 130px; /* 세로 간격 가로 간격 */
+    padding: 2px;
+    overflow-x: auto;
+}

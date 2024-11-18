@@ -1,0 +1,48 @@
+.short_container {
+    margin-top: 20px;
+    border: solid #b5b5b5 1px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.short_container video {
+    width: 270px;
+    height: 480px;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.description_container {
+    padding: 13px;
+}
+
+.description_container p {
+    margin: 0;
+}
+
+.oneline_container {
+    display: flex;
+}
+
+.shorts_text {
+    color: #b5b5b5;
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.checkbox_label {
+    margin-left: auto;
+}
+
+input[type="checkbox"] {
+    margin-left: 10px;
+}
+
+.hashtag_text {
+    color: #b5b5b5;
+    padding-top: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: bold;
+}
