@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+/assets/cluster_test1.jpg
+/assets/cluster_test2.jpg
+/assets/cluster_test3.jpg
+
 # dependencies
 /node_modules
 /.pnp

@@ -121,7 +121,7 @@ const Main = () => {
     };
   }, [inputEl, handleFileChange]);
 
-   const closeAlert = () => {
+  const closeAlert = () => {
     setShowAlert(false);
   };
 

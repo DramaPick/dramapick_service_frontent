@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
-import profile from "../assets/person_profile_test.png";
+import profile1 from "../assets/cluster_test1.jpg";
+import profile2 from "../assets/cluster_test2.jpg";
+import profile3 from "../assets/cluster_test3.jpg";
 import styles from "../styles/PSelection.module.css";
 import axios from "axios";
 
@@ -105,15 +107,9 @@ const PSelection = () => {
             </div>
             */}
             <div className={styles.profiles_div}>
-                <Person name="김수현1" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현2" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현3" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현4" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현5" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현6" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현7" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현8" imgSrc={profile} onSelect={handleSelectUser} ></Person>
-                <Person name="김수현9" imgSrc={profile} onSelect={handleSelectUser} ></Person>
+                <Person name="백현우" imgSrc={profile1} onSelect={handleSelectUser} ></Person>
+                <Person name="홍해인" imgSrc={profile2} onSelect={handleSelectUser} ></Person>
+                <Person name="윤은성" imgSrc={profile3} onSelect={handleSelectUser} ></Person>
             </div>
             <Button text="선택 완료" onClick={handleCompleteSelection}></Button>
         </div>
