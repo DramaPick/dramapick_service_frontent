@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
-import profile1 from "../assets/cluster_test1.jpg";
-import profile2 from "../assets/cluster_test2.jpg";
-import profile3 from "../assets/cluster_test3.jpg";
 import styles from "../styles/PSelection.module.css";
 import axios from "axios";
 
@@ -20,7 +17,9 @@ const PSelection = () => {
     const [s3Url, setS3Url] = useState("");
     const [taskId, setTaskId] = useState("");
     const [status, setStatus] = useState("");
-
+    const [representativeImages, setRepresentativeImages] = useState([]); // 대표 이미지 상태 추가
+    // eslint-disable-next-line
+    const [error, setError] = useState("");  // 오류 처리
 
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
@@ -33,6 +32,34 @@ const PSelection = () => {
             setDramaTitle(location.state.drama_title);
         }
     }, [location.state]); // location.state가 바뀔 때마다 실행
+
+    // 비디오 업로드 후 작업이 완료되면 대표 이미지 가져오기
+    useEffect(() => {
+        // taskId가 있을 때만 상태를 확인
+        if (taskId) {
+            const interval = setInterval(() => {
+                axios.get(`http://127.0.0.1:8000/status/${taskId}`)
+                    .then((response) => {
+                        console.log("response.data.representative_images: ", response.data.representative_images);
+                        setRepresentativeImages(response.data.representative_images);
+                        setStatus(response.data.status);
+
+                        // 작업 완료되면 폴링 멈춤
+                        if (response.data.status === "완료") {
+                            clearInterval(interval);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("대표 이미지 요청 실패:", error);
+                        setError("대표 이미지 요청 실패");
+                        clearInterval(interval);
+                    });
+            }, 5000); // 5초마다 상태 확인
+
+            // 컴포넌트가 unmount 되면 인터벌 클리어
+            return () => clearInterval(interval);
+        }
+    }, [taskId]);
 
     console.log("status: " + status + ", task_id: " + taskId + ", s3_url: " + s3Url + ", drama_title: " + dramaTitle);
 
@@ -65,7 +92,12 @@ const PSelection = () => {
             })
             .then((response) => {
                 console.log("서버 응답:", response.data);
-                navigate('/shorts');
+
+                if (response.data.status === "success") {
+                    navigate('/shorts');
+                } else {
+                    alert("쇼츠 생성에 포함시킬 인물을 선택해주세요.");
+                }
             })
             .catch((error) => {
                 console.error("서버 요청 오류:", error.response.data);
@@ -107,9 +139,17 @@ const PSelection = () => {
             </div>
             */}
             <div className={styles.profiles_div}>
-                <Person name="백현우" imgSrc={profile1} onSelect={handleSelectUser} ></Person>
-                <Person name="홍해인" imgSrc={profile2} onSelect={handleSelectUser} ></Person>
-                <Person name="윤은성" imgSrc={profile3} onSelect={handleSelectUser} ></Person>
+                {representativeImages.length > 0 ? (
+                    representativeImages.map((imageUrl, index) => (
+                        <Person
+                            key={index}
+                            name={`등장인물 ${index + 1}`} // 임의로 이름을 지정
+                            imgSrc={imageUrl}
+                            onSelect={handleSelectUser}
+                        />))
+                ) : (
+                    <p style={{color: '#003366'}}>인물 감지 및 클러스터링 진행 중입니다...</p>
+                )}
             </div>
             <Button text="선택 완료" onClick={handleCompleteSelection}></Button>
         </div>
