@@ -91,7 +91,7 @@ const Main = () => {
 
       const { task_id, status, s3_url } = response.data;
 
-       navigate('/selection', {
+      navigate('/selection', {
         state: {
           video_file : videoFile,
           video_url : videoUrl,
