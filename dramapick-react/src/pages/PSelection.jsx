@@ -33,35 +33,27 @@ const PSelection = () => {
         }
     }, [location.state]); // location.state가 바뀔 때마다 실행
 
-    // 비디오 업로드 후 작업이 완료되면 대표 이미지 가져오기
-    useEffect(() => {
-        // taskId가 있을 때만 상태를 확인
-        if (taskId) {
-            const interval = setInterval(() => {
-                axios.get(`http://127.0.0.1:8000/status/${taskId}`)
-                    .then((response) => {
-                        console.log("response.data.representative_images: ", response.data.representative_images);
-                        setRepresentativeImages(response.data.representative_images);
-                        setStatus(response.data.status);
-
-                        // 작업 완료되면 폴링 멈춤
-                        if (response.data.status === "완료") {
-                            clearInterval(interval);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("대표 이미지 요청 실패:", error);
-                        setError("대표 이미지 요청 실패");
-                        clearInterval(interval);
-                    });
-            }, 5000); // 5초마다 상태 확인
-
-            // 컴포넌트가 unmount 되면 인터벌 클리어
-            return () => clearInterval(interval);
-        }
-    }, [taskId]);
-
     console.log("status: " + status + ", task_id: " + taskId + ", s3_url: " + s3Url + ", drama_title: " + dramaTitle);
+
+    useEffect(() => {
+        if (s3Url) {
+            axios
+                .get("http://127.0.0.1:8000/person/dc", {
+                    params: {
+                        s3_url: s3Url,
+                        task_id: taskId,
+                    },
+                }).then((response) => {
+                    if (response.status === 200) {
+                        console.log(response.data.message); // "인물 감지와 클러스터링이 완료되었습니다."
+                        setRepresentativeImages(response.data.image_urls); // 이미지 URL 배열 저장
+                    }
+                })
+                .catch((error) => {
+                    console.error("API 호출 중 오류 발생:", error);
+                });
+            }
+    }, [s3Url, taskId]);
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
@@ -117,27 +109,6 @@ const PSelection = () => {
         <div className={styles.pselection_div}>
             <h2>쇼츠 생성을 원하는 인물을 선택해주세요.</h2>
             <p>아래에서 원하는 인물을 선택하여 쇼츠 생성을 위한 캐스팅을 완료해주세요.</p>
-            {/*
-            <div className={styles.video_div}>
-                {videoUrl ? (
-                    <iframe
-                        width="560"
-                        height="315"
-                        src={getEmbedUrl(videoUrl)}
-                        title="Video"
-                        frameBorder="0"
-                        allowFullScreen
-                    ></iframe>
-                ) : videoFile ? (
-                    <video width="560" height="315" controls>
-                        <source src={URL.createObjectURL(videoFile)} type={videoFile.type}/>
-                        Your browser does not support the video tag.
-                    </video>
-                ) : (
-                    <p>재생할 비디오가 없습니다.</p>
-                )}
-            </div>
-            */}
             <div className={styles.profiles_div}>
                 {representativeImages.length > 0 ? (
                     representativeImages.map((imageUrl, index) => (
