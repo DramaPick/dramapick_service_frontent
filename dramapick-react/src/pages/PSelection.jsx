@@ -73,6 +73,8 @@ const PSelection = () => {
         console.log("선택된 사용자들:", selectedUsers);
 
         const data = {
+            s3_url : s3Url,
+            task_id: taskId,
             users: selectedUsers,
         };
 
