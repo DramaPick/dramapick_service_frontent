@@ -17,12 +17,12 @@ const s3 = new AWS.S3();
 
 export const getVideo = async (shortsTitle) => {
     const encodedTitle = encodeURIComponent(shortsTitle);
-    // console.log("encodedTitle: ", encodedTitle);
+    console.log("encodedTitle: ", encodedTitle);
 
     async function download(filename) {
         try {
             const data = await s3.getObject({
-                    Key: `${encodedTitle}.mp4`,
+                    Key: `${encodedTitle}`,
                     Bucket: config.aws_bucket,  // 버킷 이름
                 }).promise();
 
