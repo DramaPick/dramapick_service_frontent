@@ -88,7 +88,8 @@ const PSelection = () => {
                 console.log("서버 응답:", response.data);
 
                 if (response.data.status === "success") {
-                    navigate('/shorts');
+                    console.log(response.data.sorted_highlights);
+                    navigate('/shorts', { state: { sorted_highlights: response.data.sorted_highlights, task_id: taskId, s3_url: s3Url}});
                 } else {
                     alert("쇼츠 생성에 포함시킬 인물을 선택해주세요.");
                 }
