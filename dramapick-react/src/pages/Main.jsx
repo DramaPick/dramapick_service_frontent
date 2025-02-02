@@ -9,6 +9,7 @@ const Main = () => {
   const inputEl = useRef(null);
   const [fileName, setFileName] = useState("");
   const [videoFile, setVideoFile] = useState(null);
+  // eslint-disable-next-line
   const [videoUrl, setVideoUrl] = useState("");
   const [dramaTitle, setDramaTitle] = useState("");
   const [error, setError] = useState("");
@@ -28,9 +29,11 @@ const Main = () => {
     }
   }, []);
 
+  /*
   const handleUrlChange = (e) => {
     setVideoUrl(e.target.value);
-  };
+  }; 
+  */
 
   const handleTitleChange = (e) => {
     setDramaTitle(e.target.value);
@@ -60,6 +63,23 @@ const Main = () => {
     console.log('드라마 제목: ', dramaTitle);
     console.log('비디오 파일:', videoFile);
     console.log('비디오 URL:', videoUrl);
+
+    // 드라마 타이틀 기반 크롤링 
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/search", {
+        params: { drama_title: dramaTitle },
+      });
+      console.log("검색 결과:", response.data);
+      alert("드라마 정보를 성공적으로 가져왔습니다! 🎉");
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError('드라마 정보를 찾을 수 없습니다. 제목을 다시 확인해주세요.');
+      } else {
+        console.error("API 요청 중 오류 발생:", error);
+        setError("오류가 발생했습니다. 다시 시도해주세요.");
+      }
+      return;
+    }
 
     const formData = new FormData();
     if (videoFile) {
@@ -127,7 +147,7 @@ const Main = () => {
 
   return (
     <div className={styles.maindiv}>
-      <h2>쇼츠 생성을 원하는 비디오 파일 혹은 비디오의 Youtube URL을 업로드해주세요.</h2>
+      <h2>쇼츠 생성을 원하는 비디오 파일을 업로드해주세요.</h2>
       <div className={styles.videoFile}>
         <div className={styles.container}>
           <label htmlFor="upload-file">
@@ -138,10 +158,12 @@ const Main = () => {
         </div>
         <p>업로드를 위해 위 버튼을 누르거나 비디오 파일을 여기로 전달해주세요.</p>
       </div>
+      {/* 
       <div className={styles.videoURL}>
         <input type="url" value={videoUrl} onChange={handleUrlChange} placeholder="Youtube URL을 입력해주세요." />
         <p>ex. https://www.youtube.com/watch?v=mzSoALcmQKU</p>
       </div>
+       */}
       <h2>드라마 제목을 입력해주세요.</h2>
       <div className={styles.title}>
         <input type="text" value={dramaTitle} onChange={handleTitleChange} placeholder="드라마 제목을 입력해주세요." required />
