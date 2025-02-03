@@ -10,7 +10,9 @@ const ShortsDown = () => {
 
     const [s3Url, setS3Url] = useState("");
     const [taskId, setTaskId] = useState("");
+    const [dramaTitle, setDramaTitle] = useState("");
     const [sortedHighlights, setSortedHighlights] = useState([]);
+    const [localPathList, setLocalPathList] = useState([]);
     const [finalShortsS3Url, setFinalShortsS3Url] = useState([]);
     const [adjustedHighlights, setAdjustedHighlights] = useState([]);
     const [selectedVideos, setSelectedVideos] = useState([]); // 선택된 동영상들
@@ -23,16 +25,12 @@ const ShortsDown = () => {
             setSortedHighlights(location.state.sorted_highlights);
             setS3Url(location.state.s3_url);
             setTaskId(location.state.task_id);
+            setDramaTitle(location.state.drama_title);
         }
     }, [location.state]); // location.state가 바뀔 때마다 실행
 
     useEffect(() => {
         if (sortedHighlights.length > 0 && s3Url && taskId) {
-            // console.log("sortedHighlights: " + sortedHighlights + ", s3Url: " + s3Url + ", taskId: ", + taskId);
-            // console.log("sortedHighlights type: " + getType(sortedHighlights));
-            // console.log("일반 배열: " + [[48.32, 83.82], [127.21, 159.75]]);
-            // console.log("s3Url type: " + getType(s3Url) + ", taskId type: " + getType(taskId));
-
             axios
                 .post("http://127.0.0.1:8000/highlight/adjust", {
                     s3_url: s3Url, // s3_url 문자열
@@ -53,7 +51,7 @@ const ShortsDown = () => {
                     console.error("API 호출 중 오류 발생:", error);
                 });
         }
-    }, [sortedHighlights, s3Url, taskId]);
+    }, [sortedHighlights, s3Url, taskId, dramaTitle]);
 
     useEffect(() => {
         if (adjustedHighlights.length > 0 && s3Url && taskId) {
@@ -71,14 +69,35 @@ const ShortsDown = () => {
                 .then((response) => {
                     if (response.status === 200) {
                         console.log(response.data.message); // "최종 쇼츠 저장 완료"
-                        setFinalShortsS3Url(response.data.s3_url_list);
+                        setLocalPathList(response.data.local_path_list);
                     }
                 })
                 .catch((error) => {
                     console.error("API 호출 중 오류 발생:", error);
                 });
         }
-    }, [adjustedHighlights, s3Url, taskId, sortedHighlights]);
+    }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights]);
+
+    useEffect(() => {
+        if (localPathList.length > 0 && s3Url && taskId && dramaTitle) {
+            axios.post("http://127.0.0.1:8000/highlights/clip", {
+                local_path_list: localPathList,
+                task_id: taskId,
+                drama_title: dramaTitle,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).then((response) => {
+                if (response.status === 200) {
+                    console.log(response.data);
+                    setFinalShortsS3Url(response.data.s3_url_list);
+                }
+            }).catch((error) => {
+                console.error("API 호출 중 오류 발생:", error);
+            });
+        }
+    }, [localPathList, adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights]);
 
     const handleCheckboxChange = (fileName, shortsNum, isChecked) => {
         setSelectedVideos((prevSelected) => {
@@ -144,9 +163,11 @@ const ShortsDown = () => {
             <h2>쇼츠 생성이 완료되었습니다. 원하는 쇼츠를 선택해 다운로드하세요.</h2>
             <div className={styles.container}>
                 {adjustedHighlights.length === 0 ? (
-                    <p style={{ color: "#003366" }}>인물 기반 하이라이트 구간 추출 중입니다...</p>
+                    <p style={{ color: "#003366" }}>인물 기반 하이라이트 구간 추출 중...</p>
+                ) : localPathList.length === 0 ? (
+                    <p style={{ color: "#003366" }}>쇼츠 생성 중(쇼츠 하나를 생성하는 데 약 3분이 소요됩니다.)...</p>
                 ) : finalShortsS3Url.length === 0 ? (
-                    <p style={{ color: "#003366" }}>최종 쇼츠 생성 중입니다...</p>
+                    <p style={{ color: "#003366" }}>드라마 정보 삽입 및 최종 쇼츠 추출 중...</p>
                 ) : finalShortsS3Url.length > 0 ? (
                     finalShortsS3Url.map((url, index) => (
                         <Shorts

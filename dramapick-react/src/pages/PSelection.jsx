@@ -89,7 +89,7 @@ const PSelection = () => {
 
                 if (response.data.status === "success") {
                     console.log(response.data.sorted_highlights);
-                    navigate('/shorts', { state: { sorted_highlights: response.data.sorted_highlights, task_id: taskId, s3_url: s3Url}});
+                    navigate('/shorts', { state: { sorted_highlights: response.data.sorted_highlights, task_id: taskId, s3_url: s3Url, drama_title: dramaTitle}});
                 } else {
                     alert("쇼츠 생성에 포함시킬 인물을 선택해주세요.");
                 }
