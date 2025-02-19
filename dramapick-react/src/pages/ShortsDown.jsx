@@ -12,7 +12,6 @@ const ShortsDown = () => {
     const [taskId, setTaskId] = useState("");
     const [dramaTitle, setDramaTitle] = useState("");
     const [sortedHighlights, setSortedHighlights] = useState([]);
-    const [localPathList, setLocalPathList] = useState([]);
     const [finalShortsS3Url, setFinalShortsS3Url] = useState([]);
     const [adjustedHighlights, setAdjustedHighlights] = useState([]);
     const [selectedVideos, setSelectedVideos] = useState([]); // 선택된 동영상들
@@ -54,13 +53,14 @@ const ShortsDown = () => {
     }, [sortedHighlights, s3Url, taskId, dramaTitle]);
 
     useEffect(() => {
-        if (adjustedHighlights.length > 0 && s3Url && taskId) {
+        if (adjustedHighlights.length > 0 && s3Url && taskId && dramaTitle) {
 
             axios
                 .post("http://127.0.0.1:8000/highlights/save", {
                     s3_url: s3Url, // s3_url 문자열
                     task_id: taskId, // task_id 문자열
-                    highlights: adjustedHighlights, // sortedHighlights 배열
+                    drama_title: dramaTitle,
+                    adjusted_highlights: adjustedHighlights, // sortedHighlights 배열
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const ShortsDown = () => {
                 .then((response) => {
                     if (response.status === 200) {
                         console.log(response.data.message); // "최종 쇼츠 저장 완료"
-                        setLocalPathList(response.data.local_path_list);
+                        setFinalShortsS3Url(response.data.s3_url_list);
                     }
                 })
                 .catch((error) => {
@@ -77,27 +77,6 @@ const ShortsDown = () => {
                 });
         }
     }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights]);
-
-    useEffect(() => {
-        if (localPathList.length > 0 && s3Url && taskId && dramaTitle) {
-            axios.post("http://127.0.0.1:8000/highlights/clip", {
-                local_path_list: localPathList,
-                task_id: taskId,
-                drama_title: dramaTitle,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }).then((response) => {
-                if (response.status === 200) {
-                    console.log(response.data);
-                    setFinalShortsS3Url(response.data.s3_url_list);
-                }
-            }).catch((error) => {
-                console.error("API 호출 중 오류 발생:", error);
-            });
-        }
-    }, [localPathList, adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights]);
 
     const handleCheckboxChange = (fileName, shortsNum, isChecked) => {
         setSelectedVideos((prevSelected) => {
@@ -164,10 +143,8 @@ const ShortsDown = () => {
             <div className={styles.container}>
                 {adjustedHighlights.length === 0 ? (
                     <p style={{ color: "#003366" }}>인물 기반 하이라이트 구간 추출 중...</p>
-                ) : localPathList.length === 0 ? (
-                    <p style={{ color: "#003366" }}>쇼츠 생성 중(쇼츠 하나를 생성하는 데 약 3분이 소요됩니다.)...</p>
                 ) : finalShortsS3Url.length === 0 ? (
-                    <p style={{ color: "#003366" }}>드라마 정보 삽입 및 최종 쇼츠 추출 중...</p>
+                    <p style={{ color: "#003366" }}>드라마 정보 삽입 및 최종 쇼츠 추출 중... (쇼츠 하나를 생성하는 데 6~7분이 소요됩니다.)</p>
                 ) : finalShortsS3Url.length > 0 ? (
                     finalShortsS3Url.map((url, index) => (
                         <Shorts
