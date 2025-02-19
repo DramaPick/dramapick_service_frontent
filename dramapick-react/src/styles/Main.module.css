@@ -170,3 +170,8 @@
 .closeAlertBtn:hover {
     background-color: #ff1e1e;
 }
+
+.titleContainer p {
+    padding-bottom: 8px;
+    margin-left: 20px;
+}

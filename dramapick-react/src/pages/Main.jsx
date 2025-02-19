@@ -165,8 +165,11 @@ const Main = () => {
       </div>
        */}
       <h2>드라마 제목을 입력해주세요.</h2>
-      <div className={styles.title}>
-        <input type="text" value={dramaTitle} onChange={handleTitleChange} placeholder="드라마 제목을 입력해주세요." required />
+      <div className={styles.titleContainer}>
+        <p> 드라마 제목을 기반으로 한 크롤링을 통해 방영 기간, 방송사 및 드라마 제목을 쇼츠 하단에 자동으로 삽입해줍니다. </p>
+        <div className={styles.title}>
+          <input type="text" value={dramaTitle} onChange={handleTitleChange} placeholder="드라마 제목을 입력해주세요." required />
+        </div>
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
