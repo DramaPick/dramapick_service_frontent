@@ -1,0 +1,59 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9000;
+}
+
+.modalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-width: 300px;
+    text-align: center;
+}
+
+.modalContent input {
+    border: 1px solid #808080;
+    border-radius: 2px;
+    font-size: 16px;
+
+    width: 99%;
+    opacity: 70%;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    display: block;
+}
+
+
+.modalContent button {
+    width: 70px;
+    height: 35px;
+    font-size: 16px;
+    background-color: #fff480;
+    /* 연노랑색 */
+    color: rgba(23, 22, 22, 0.859);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-right: 20px;
+}
+
+.modalContent button:hover {
+    background-color: #fff38bdb;
+    /* 조금 더 진한 노랑 (호버 효과) */
+}
