@@ -10,10 +10,10 @@ const config = {
 AWS.config.update({
     region: config.aws_reg,
     accessKeyId: config.aws_key,
-    secretAccessKey: config.aws_sec
+    secretAccessKey: config.aws_sec,
 });
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({});
 
 export const getVideo = async (shortsTitle) => {
     const encodedTitle = encodeURIComponent(shortsTitle);

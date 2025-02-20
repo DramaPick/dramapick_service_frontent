@@ -1,3 +1,7 @@
+.main_div {
+    position: relative;
+}
+
 .short_container {
     margin-top: 20px;
     border: solid #b5b5b5 1px;

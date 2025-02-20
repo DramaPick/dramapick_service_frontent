@@ -99,8 +99,11 @@ const PSelection = () => {
             })
             .then((response) => {
                 console.log("서버 응답:", response.data);
-
-                if (response.data.status === "success") {
+                if (response.data.status === "no_highlight") {
+                    alert("추출된 하이라이트가 없습니다. 더 긴 영상의 비디오를 업로드해주세요.");
+                    navigate("/main");
+                }
+                else if (response.data.status === "success") {
                     console.log(response.data.sorted_highlights);
                     navigate('/shorts', { state: { sorted_highlights: response.data.sorted_highlights, task_id: taskId, s3_url: s3Url, drama_title: dramaTitle}});
                 } else {
