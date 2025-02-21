@@ -1,11 +1,14 @@
 import React, {useState, useEffect} from "react";
 import styles from "../styles/Shorts.module.css";
 
-const Shorts = ({fileName, s3Url, shortsNum, onCheckboxChange}) => {
+const Shorts = ({fileName, s3Url, dramaTitle, shortsTitle, shortsNum, onCheckboxChange}) => {
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
     const [isChecked, setIsChecked] = useState(false); // checkbox 클릭 상태 관리 
 
-    const hashtag = "#김수현 #김지원\n#눈물의 여왕";
+    let hashtag = `# ${dramaTitle}\n#${shortsTitle.replace('-', '')}`;
+    if (shortsTitle === "") {
+        hashtag = `# ${dramaTitle}\n`;
+    }
 
     useEffect(() => {
         console.log("Shorts useEffect triggered! fileName: ", fileName);
