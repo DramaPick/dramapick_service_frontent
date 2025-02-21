@@ -14,6 +14,7 @@ const Main = () => {
   const [dramaTitle, setDramaTitle] = useState("");
   const [error, setError] = useState("");
 
+  // eslint-disable-next-line
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -21,19 +22,32 @@ const Main = () => {
   const handleFileChange = useCallback((e) => {
     const files = e.target && e.target.files;
     if (files && files[0]) {
-      setVideoFile(e.target.files[0]);
-      setFileName(e.target.files[0].name);
+      const file = files[0];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['mov', 'mp4'];
+
+      console.log("fileExtension: ", fileExtension);
+
+      if (allowedExtensions.includes(fileExtension)) {
+        setVideoFile(file);
+        setFileName(file.name);
+      } else {
+        alert('지원하지 않는 파일 형식입니다. .mov 또는 .mp4 파일을 업로드해주세요.');
+        setVideoFile(null);
+        setFileName('');
+        if (inputEl.current) {
+          inputEl.current.value = '';
+        }
+      }
     } else {
       setVideoFile(null);
       setFileName('');
     }
   }, []);
 
-  /*
-  const handleUrlChange = (e) => {
-    setVideoUrl(e.target.value);
-  }; 
-  */
+  useEffect(() => {
+    sessionStorage.clear(); // ✅ 세션 스토리지 초기화
+  }, []);
 
   const handleTitleChange = (e) => {
     setDramaTitle(e.target.value);
@@ -141,10 +155,6 @@ const Main = () => {
     };
   }, [inputEl, handleFileChange]);
 
-  const closeAlert = () => {
-    setShowAlert(false);
-  };
-
   return (
     <div className={styles.maindiv}>
       <h2>쇼츠 생성을 원하는 비디오 파일을 업로드해주세요.</h2>
@@ -174,17 +184,21 @@ const Main = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {showAlert && isUploading && (
-        <div className={styles.alertBox}>
-          <div className={styles.alertContent}>
-            <p>업로드 진행 중...</p>
-            <div className={styles.progressBarWrapper}>
-              <div className={styles.progressBar} style={{ width: `${uploadProgress}%` }} />
-            </div>
-            <button className={styles.closeAlertBtn} onClick={closeAlert}>닫기</button>
-          </div>
+        <div style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "rgb(255, 241, 137)", 
+            color: "black",
+            padding: "20px",
+            borderRadius: "8px",
+            zIndex: 9999
+        }}>
+            <progress style={{ width: "100%" }} />
+            <p>비디오 업로드 진행 중</p>
         </div>
       )}
-
       <Button onClick={handleSubmit} text="업로드"></Button>
     </div>
   );
