@@ -49,4 +49,5 @@ input[type="checkbox"] {
     font-size: 14px;
     line-height: 1.5;
     font-weight: bold;
+    white-space: pre-line;
 }

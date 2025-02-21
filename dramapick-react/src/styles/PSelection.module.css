@@ -57,12 +57,19 @@
 
 /* 진행바 Wrapper */
 .progressBarWrapper {
-    margin-top: 10px;
-    width: 100%;
-    height: 8px;
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
+    position: "fixed";
+    top: "50%";
+    left: "50%";
+    transform: "translate(-50%, -50%)";
+    background-color: "rgb(255, 241, 137)";
+    color: "black";
+    padding: "20px";
+    border-radius: "8px",;
+    z-index: 9999;
+}
+
+.progressBarWrapper progress::-webkit-progress-value {
+    background-color: #BFD7EF;
 }
 
 .progressBar {
