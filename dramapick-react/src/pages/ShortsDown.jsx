@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Shorts from '../components/Shorts';
 import styles from "../styles/ShortsDown.module.css";
 import Button from "../components/Button";
@@ -16,6 +16,7 @@ const ShortsDown = () => {
     const [finalShortsS3Url, setFinalShortsS3Url] = useState([]);
     const [adjustedHighlights, setAdjustedHighlights] = useState([]);
     const [selectedVideos, setSelectedVideos] = useState([]); // 선택된 동영상들
+    // eslint-disable-next-line
     const [downloadProgress, setDownloadProgress] = useState(0); // 다운로드 진행 상태
     const [isDownloading, setIsDownloading] = useState(false); // 다운로드 진행 중 여부
     const [showAlert, setShowAlert] = useState(false); // 알림 표시 여부
@@ -30,62 +31,137 @@ const ShortsDown = () => {
 
     useEffect(() => {
         if (location.state) {
+            sessionStorage.setItem("sorted_highlights", JSON.stringify(location.state.sorted_highlights));
+            sessionStorage.setItem("s3_url", location.state.s3_url);
+            sessionStorage.setItem("task_id", location.state.task_id);
+            sessionStorage.setItem("drama_title", location.state.drama_title);
+
             setSortedHighlights(location.state.sorted_highlights);
             setS3Url(location.state.s3_url);
             setTaskId(location.state.task_id);
             setDramaTitle(location.state.drama_title);
+        } else {
+            // 새로고침 시 sessionStorage에서 복원
+            const storedHighlights = sessionStorage.getItem("sorted_highlights");
+            const storedS3Url = sessionStorage.getItem("s3_url");
+            const storedTaskId = sessionStorage.getItem("task_id");
+            const storedDramaTitle = sessionStorage.getItem("drama_title");
+
+            if (storedHighlights) setSortedHighlights(JSON.parse(storedHighlights));
+            if (storedS3Url) setS3Url(storedS3Url);
+            if (storedTaskId) setTaskId(storedTaskId);
+            if (storedDramaTitle) setDramaTitle(storedDramaTitle);
         }
     }, [location.state]); // location.state가 바뀔 때마다 실행
 
     useEffect(() => {
-        if (sortedHighlights.length > 0 && s3Url && taskId) {
-            axios
-                .post("http://127.0.0.1:8000/highlight/adjust", {
-                    s3_url: s3Url, // s3_url 문자열
-                    task_id: taskId, // task_id 문자열
-                    highlights: sortedHighlights, // sortedHighlights 배열
-                }, {
-                    headers: {
-                        "Content-Type": "application/json", // JSON 형식으로 전송
-                    },
-                })
-                .then((response) => {
-                    if (response.status === 200) {
-                        console.log(response.data.message); // "하이라이트 조정이 완료되었습니다."
-                        setAdjustedHighlights(response.data.adjusted_highlights);
-                    }
-                })
-                .catch((error) => {
-                    console.error("API 호출 중 오류 발생:", error);
-                });
-        }
-    }, [sortedHighlights, s3Url, taskId, dramaTitle]);
+        const storedHighlights = sessionStorage.getItem("sorted_highlights");
+        const storedS3Url = sessionStorage.getItem("s3_url");
+        const storedTaskId = sessionStorage.getItem("task_id");
+        const storedDramaTitle = sessionStorage.getItem("drama_title");
+
+        if (storedHighlights) setSortedHighlights(JSON.parse(storedHighlights));
+        if (storedS3Url) setS3Url(storedS3Url);
+        if (storedTaskId) setTaskId(storedTaskId);
+        if (storedDramaTitle) setDramaTitle(storedDramaTitle);
+    }, []);
 
     useEffect(() => {
-        if (adjustedHighlights.length > 0 && s3Url && taskId && dramaTitle) {
-
-            axios
-                .post("http://127.0.0.1:8000/highlights/save", {
-                    s3_url: s3Url, // s3_url 문자열
-                    task_id: taskId, // task_id 문자열
-                    drama_title: dramaTitle,
-                    adjusted_highlights: adjustedHighlights, // sortedHighlights 배열
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                .then((response) => {
-                    if (response.status === 200) {
-                        console.log(response.data.message); // "최종 쇼츠 저장 완료"
-                        setFinalShortsS3Url(response.data.s3_url_list);
-                    }
-                })
-                .catch((error) => {
-                    console.error("API 호출 중 오류 발생:", error);
-                });
+        const storedAdjustedHighlights = sessionStorage.getItem("adjustedHighlights");
+        if (storedAdjustedHighlights !== null) {
+            setAdjustedHighlights(JSON.parse(storedAdjustedHighlights));
         }
-    }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights]);
+
+        const storedFinalShortsS3Url = sessionStorage.getItem("finalShortsS3Url");
+        if (storedFinalShortsS3Url !== null) {
+            setFinalShortsS3Url(JSON.parse(storedFinalShortsS3Url));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (adjustedHighlights.length > 0) {
+            sessionStorage.setItem("adjustedHighlights", JSON.stringify(adjustedHighlights));
+        }
+
+        if (finalShortsS3Url.length > 0) {
+            sessionStorage.setItem("finalShortsS3Url", JSON.stringify(finalShortsS3Url));
+        }
+    }, [adjustedHighlights, finalShortsS3Url]);
+
+    const adApiCallRef = useRef(0);
+    useEffect(() => {
+        if (sortedHighlights.length > 0 && s3Url && taskId) {
+            
+            const savedAdjustedHighlights = JSON.parse(sessionStorage.getItem("adjustedHighlights"));
+            console.log("===> savedAdjustedHighlights: ", savedAdjustedHighlights);
+            console.log("===> adjustedHighlights length: ", adjustedHighlights.length);
+            console.log("adApiCallRef: ", adApiCallRef.current);
+            
+            if (adApiCallRef.current === 0 && adjustedHighlights.length === 0) {
+                axios
+                    .post("http://127.0.0.1:8000/highlight/adjust", {
+                        s3_url: s3Url, // s3_url 문자열
+                        task_id: taskId, // task_id 문자열
+                        highlights: sortedHighlights, // sortedHighlights 배열
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json", // JSON 형식으로 전송
+                        },
+                    })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            console.log(response.data.message); // "하이라이트 조정이 완료되었습니다."
+                            setAdjustedHighlights(response.data.adjusted_highlights);
+
+                            sessionStorage.setItem("adjustedHighlights", JSON.stringify(response.data.adjusted_highlights));
+
+                            adApiCallRef.current += 1;
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("API 호출 중 오류 발생:", error);
+                    }
+                );
+            } 
+        }
+    }, [sortedHighlights, s3Url, taskId, dramaTitle, adjustedHighlights]);
+
+    const finalApiCall = useRef(0);
+    useEffect(() => {
+        if (adjustedHighlights.length > 0 && sortedHighlights && s3Url && taskId) {
+            
+            const savedFinalShortsS3Url = JSON.parse(sessionStorage.getItem("finalShortsS3Url"));
+            console.log("===> savedFinalShortsS3Url: ", savedFinalShortsS3Url);
+            console.log("===> finalShortsS3Url length: ", finalShortsS3Url.length);
+            console.log("finalApiCall: ", finalApiCall.current);
+            
+            if (finalApiCall.current === 0 && finalShortsS3Url.length === 0) {
+                axios
+                    .post("http://127.0.0.1:8000/highlights/save", {
+                        s3_url: s3Url, // s3_url 문자열
+                        task_id: taskId, // task_id 문자열
+                        drama_title: dramaTitle,
+                        adjusted_highlights: adjustedHighlights, // sortedHighlights 배열
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            console.log(response.data.message); // "최종 쇼츠 저장 완료"
+                            setFinalShortsS3Url(response.data.s3_url_list);
+                            sessionStorage.setItem("finalShortsS3Url", JSON.stringify(response.data.s3_url_list));
+
+                            finalApiCall.current += 1;
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("API 호출 중 오류 발생:", error);
+                    });
+            }
+        }
+    }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights, finalShortsS3Url]);
 
     const handleCheckboxChange = (fileName, shortsNum, isChecked) => {
         setSelectedVideos((prevSelected) => {
@@ -99,6 +175,11 @@ const ShortsDown = () => {
 
     const openModal = () => {
         if (selectedVideos.length === 1) {
+            console.log("-----> open modal : ", selectedVideos);
+            if (selectedVideos.every(video => video.fileName.includes("ai_title"))) {
+                alert("이미 생성된 제목이 존재하는 쇼츠입니다. 다른 쇼츠를 생성해주세요.");
+                return;
+            }
             setIsModalOpen(true);
             setErrorMessageForOpenModal("");
         } else if (selectedVideos.length === 0) {
@@ -152,10 +233,6 @@ const ShortsDown = () => {
         }
         setIsDownloading(false);
         setDownloadProgress(0);
-    };
-
-    const closeAlert = () => {
-        setShowAlert(false);
     };
 
     const handleShortsTitleGen = async () => {
@@ -221,6 +298,13 @@ const ShortsDown = () => {
                     return updatedUrls;
                 });
                 console.log("After mapping: ", finalShortsS3Url);
+                setSelectedVideos((prevSelected) => {
+                    return prevSelected.map(video =>
+                        video.fileName === selectedFileName
+                            ? { ...video, fileName: s3_url_with_title.split('/').pop() }
+                            : video
+                    );
+                });
                 closeModal();
             }
         } catch (error) {
@@ -229,26 +313,48 @@ const ShortsDown = () => {
         }
     };
 
-    useEffect(() => {
-        if (finalShortsS3Url.length > 0) {
-            console.log("Updated finalShortsS3Url:", finalShortsS3Url);   
-        }
-    }, [finalShortsS3Url]);
-
     return (
         <div className={styles.main_div}>
             <h2>쇼츠 생성이 완료되었습니다. 원하는 쇼츠를 선택해 다운로드하세요.</h2>
             <div className={styles.container}>
                 {adjustedHighlights?.length === 0 ? (
-                    <p style={{ color: "#003366" }}>인물 기반 하이라이트 구간 추출 중...</p>
+                    <div style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgb(255, 241, 137)", 
+                        color: "black",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        zIndex: 9999
+                    }}>
+                        <progress style={{ width: "100%" }} />
+                        <p>인물 기반 하이라이트 구간 추출 중...</p>
+                    </div>
                 ) : finalShortsS3Url?.length === 0 ? (
-                    <p style={{ color: "#003366" }}>드라마 정보 삽입 및 최종 쇼츠 추출 중... (쇼츠 하나를 생성하는 데 6~7분이 소요됩니다.)</p>
+                    <div style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgb(255, 241, 137)", 
+                        color: "black",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        zIndex: 9999
+                    }}>
+                        <progress style={{ width: "100%" }} />
+                        <p>드라마 정보 삽입 및 최종 쇼츠 추출 중... (쇼츠 하나를 생성하는 데 평균적으로 3분이 소요됩니다.)</p>
+                    </div>
                 ) : finalShortsS3Url?.length > 0 ? (
                     finalShortsS3Url.map((url, index) => (
                         <Shorts
                             key={index}
                             fileName={url.split("/").pop()} // URL에서 파일 이름 추출
                             s3Url={url}
+                            dramaTitle = {dramaTitle}
+                            shortsTitle = {selectedTitle}
                             shortsNum={index + 1}
                             onCheckboxChange={handleCheckboxChange}
                         />
@@ -261,14 +367,19 @@ const ShortsDown = () => {
             <Button text="AI로 쇼츠 제목 생성하기" onClick={openModal} />
             {errorMessageForOpenModal && <p style={{ color: "red", marginTop: "8px" }}>{errorMessageForOpenModal}</p>}
             {showAlert && isDownloading && (
-                <div className={styles.alertBox}>
-                    <div className={styles.alertContent}>
-                        <p>다운로드 진행 중...</p>
-                        <div className={styles.progressBarWrapper}>
-                            <div className={styles.progressBar} style={{ width: `${downloadProgress}%` }} />
-                        </div>
-                        <button className={styles.closeAlertBtn} onClick={closeAlert}>닫기</button>
-                    </div>
+                <div style={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    backgroundColor: "rgb(255, 241, 137)", 
+                    color: "black",
+                    padding: "20px",
+                    borderRadius: "8px",
+                    zIndex: 9999
+                }}>
+                    <progress style={{ width: "100%" }} />
+                    <p>🎬 쇼츠 다운로드 중...</p>
                 </div>
             )}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
