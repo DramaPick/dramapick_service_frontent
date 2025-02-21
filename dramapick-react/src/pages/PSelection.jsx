@@ -10,16 +10,14 @@ const PSelection = () => {
 
     const [selectedUsers, setSelectedUsers] = useState([]);
     const postVideoId = "1";
-    // eslint-disable-next-line
-    const [videoFile, setVideoFile] = useState(null);
-    // eslint-disable-next-line
-    const [videoUrl, setVideoUrl] = useState("");
     const [dramaTitle, setDramaTitle] = useState("");
     const [s3Url, setS3Url] = useState("");
     const [taskId, setTaskId] = useState("");
     const [status, setStatus] = useState("");
     const [representativeImages, setRepresentativeImages] = useState([]); // 대표 이미지 상태 추가
+    const [sortedHighlights, setSortedHighlights] = useState([]);
 
+    // eslint-disable-next-line
     const [actorProgress, setActorProgress] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
@@ -30,36 +28,102 @@ const PSelection = () => {
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
         if (location.state) {
-            setVideoFile(location.state.video_file);
-            setVideoUrl(location.state.video_url);
             setS3Url(location.state.s3_url);
             setTaskId(location.state.task_id);
             setStatus(location.state.status);
             setDramaTitle(location.state.drama_title);
+        } else {
+            const storedS3Url = sessionStorage.getItem("s3_url");
+            const storedTaskId = sessionStorage.getItem("task_id");
+            const storedDramaTitle = sessionStorage.getItem("drama_title");
+
+            if (storedS3Url) setS3Url(storedS3Url);
+            if (storedTaskId) setTaskId(storedTaskId);
+            if (storedDramaTitle) setDramaTitle(storedDramaTitle);
         }
     }, [location.state]); // location.state가 바뀔 때마다 실행
+
+    useEffect(() => {
+        const storedS3Url = sessionStorage.getItem("s3_url");
+        const storedTaskId = sessionStorage.getItem("task_id");
+        const storedDramaTitle = sessionStorage.getItem("drama_title");
+    
+        if (storedS3Url) setS3Url(storedS3Url);
+        if (storedTaskId) setTaskId(storedTaskId);
+        if (storedDramaTitle) setDramaTitle(storedDramaTitle);
+    }, []);
 
     console.log("status: " + status + ", task_id: " + taskId + ", s3_url: " + s3Url + ", drama_title: " + dramaTitle);
 
     useEffect(() => {
-        if (s3Url) {
-            axios
-                .get("http://127.0.0.1:8000/person/dc", {
-                    params: {
-                        s3_url: s3Url,
-                        task_id: taskId,
-                    },
-                }).then((response) => {
-                    if (response.status === 200) {
-                        console.log(response.data.message); // "인물 감지와 클러스터링이 완료되었습니다."
-                        setRepresentativeImages(response.data.image_urls); // 이미지 URL 배열 저장
-                    }
-                })
-                .catch((error) => {
-                    console.error("API 호출 중 오류 발생:", error);
-                });
+        const storedImgS3Urls = sessionStorage.getItem("image_s3_urls");
+        const storedSelectedUsers = sessionStorage.getItem("selected_users");
+        const storedSortedHighlights = sessionStorage.getItem("sorted_highlights");
+        if (storedImgS3Urls) {
+            setRepresentativeImages(JSON.parse(storedImgS3Urls));
+        } 
+        if (storedSelectedUsers) {
+            setSelectedUsers(JSON.parse(storedSelectedUsers));
+        }
+        if (storedSortedHighlights) {
+            setSortedHighlights(JSON.parse(storedSortedHighlights));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (representativeImages.length > 0) {
+            sessionStorage.setItem("image_s3_urls", JSON.stringify(representativeImages));
+        } 
+        if (selectedUsers.length > 0) {
+            sessionStorage.setItem("selected_users", JSON.stringify(selectedUsers));
+        }
+        if (sortedHighlights.length > 0) {
+            sessionStorage.setItem("sorted_highlights", JSON.stringify(sortedHighlights));
+        }
+    }, [representativeImages, selectedUsers, sortedHighlights]);
+
+    useEffect(() => {
+        const handlePopState = () => {
+            console.log("뒤로 가기 감지됨!");
+            const storedImgS3Urls = sessionStorage.getItem("image_s3_urls");
+            const storedSelectedUsers = sessionStorage.getItem("selected_users");
+
+            if (storedImgS3Urls) {
+                setRepresentativeImages(JSON.parse(storedImgS3Urls));
             }
-    }, [s3Url, taskId]);
+            if (storedSelectedUsers) {
+                setSelectedUsers(JSON.parse(storedSelectedUsers));
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, []);
+
+    useEffect(() => {
+        if (s3Url && taskId) {
+            console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
+            if (representativeImages.length === 0) {
+                axios
+                    .get("http://127.0.0.1:8000/person/dc", {
+                        params: {
+                            s3_url: s3Url,
+                            task_id: taskId,
+                        },
+                    }).then((response) => {
+                        if (response.status === 200) {
+                            console.log(response.data.message); // "인물 감지와 클러스터링이 완료되었습니다."
+                            setRepresentativeImages(response.data.image_urls); // 이미지 URL 배열 저장
+
+                            sessionStorage.setItem("image_s3_urls", JSON.stringify(response.data.image_urls));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("API 호출 중 오류 발생:", error);
+                    });
+                }
+            }
+    }, [s3Url, taskId, representativeImages.length]);
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
@@ -105,6 +169,7 @@ const PSelection = () => {
                 }
                 else if (response.data.status === "success") {
                     console.log(response.data.sorted_highlights);
+                    sessionStorage.setItem("sorted_highlights", JSON.stringify(response.data.sorted_highlights));
                     navigate('/shorts', { state: { sorted_highlights: response.data.sorted_highlights, task_id: taskId, s3_url: s3Url, drama_title: dramaTitle}});
                 } else {
                     alert("쇼츠 생성에 포함시킬 인물을 선택해주세요.");
@@ -117,25 +182,14 @@ const PSelection = () => {
                 setActorProgress(0);
             }); 
     };
-
-    // Person 컴포넌트에서 전달된 선택 상태를 부모에서 처리
-    /* const handleSelectUser = (name, imgSrc, isSelected) => {
-        if (isSelected) { // 체크되었을 때 해당 사용자 추가
-            setSelectedUsers((prev) => [...prev, { name, imgSrc }]);
-        } else { // 체크 해제되었을 때 해당 사용자 제거
-            setSelectedUsers((prev) => prev.filter(user => user.name !== name));
-        }
-    }; */
     
     const handleSelectUser = (name, imgSrc, isSelected) => {
         setSelectedUsers((prev) => {
             if (isSelected) {
-                // 이미 선택된 사용자가 아니면 추가
                 if (!prev.some(user => user.name === name)) {
                     return [...prev, { name, imgSrc }];
                 }
             } else {
-                // 선택 해제 시 제거
                 return prev.filter(user => user.name !== name);
             }
             return prev;
@@ -144,10 +198,6 @@ const PSelection = () => {
 
     const isUserSelected = (name) => {
         return selectedUsers.some(user => user.name === name);
-    };
-
-    const closeAlert = () => {
-        setShowAlert(false)
     };
 
     return (
@@ -169,19 +219,37 @@ const PSelection = () => {
                         );
                     })
                 ) : (
-                    <p style={{ color: "#003366" }}>인물 감지 및 클러스터링 진행 중입니다...</p>
+                    <div style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgb(255, 241, 137)", 
+                        color: "black",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        zIndex: 9999
+                    }}>
+                        <progress style={{ width: "100%" }} />
+                        <p>인물 감지 및 클러스터링 진행 중입니다...</p>
+                    </div>
                 )}
             </div>
             {showAlert && isProcessing && (
-                <div className={styles.alertBox}>
-                  <div className={styles.alertContent}>
-                    <p>쇼츠 등장 인물 처리 중...</p>
-                    <div className={styles.progressBarWrapper}>
-                      <div className={styles.progressBar} style={{ width: `${actorProgress}%` }} />
+                <div style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgb(255, 241, 137)", 
+                        color: "black",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        zIndex: 9999
+                    }}>
+                        <progress style={{ width: "100%" }} />
+                        <p>선택한 등장인물 위주 쇼츠 생성 준비 중...</p>
                     </div>
-                    <button className={styles.closeAlertBtn} onClick={closeAlert}>닫기</button>
-                  </div>
-                </div>
             )}
 
             <Button text="선택 완료" onClick={handleCompleteSelection}></Button>
