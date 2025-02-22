@@ -185,18 +185,37 @@ const Main = () => {
 
       {showAlert && isUploading && (
         <div style={{
+          position: "fixed",
+          top: "0",  // 화면 상단에 고정
+          left: "0",  // 화면 왼쪽에 고정
+          width: "100%",  // 전체 화면 너비
+          height: "100%",  // 전체 화면 높이
+          backgroundColor: "rgba(0, 0, 0, 0.3)",  // 배경을 반투명하게 (검정색 배경, 불투명도 0.3)
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 9998
+        }}>
+        <div style={{
             position: "fixed",
-            top: "50%",
+            top: "40%",
             left: "50%",
+            width: "17%",
+            height: "12%",
             transform: "translate(-50%, -50%)",
-            backgroundColor: "rgb(255, 241, 137)", 
+            backgroundColor: "#f4dbb3", 
             color: "black",
             padding: "20px",
             borderRadius: "8px",
-            zIndex: 9999
+            zIndex: 9999,
+            display: "flex",           // 부모 div를 flex 컨테이너로 설정
+            flexDirection: "column",   // 수직 정렬을 위해 column 방향으로 설정
+            justifyContent: "center",  // 수직 가운데 정렬
+            alignItems: "center"       // 수평 가운데 정렬
         }}>
             <progress style={{ width: "100%" }} />
-            <p>비디오 업로드 진행 중</p>
+            <p>📹 비디오 업로드 진행 중</p>
+        </div>
         </div>
       )}
       <Button onClick={handleSubmit} text="업로드"></Button>
