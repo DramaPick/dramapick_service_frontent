@@ -100,6 +100,8 @@ const PSelection = () => {
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (s3Url && taskId) {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
@@ -111,11 +113,14 @@ const PSelection = () => {
                             task_id: taskId,
                         },
                     }).then((response) => {
-                        if (response.status === 200) {
-                            console.log(response.data.message); // "인물 감지와 클러스터링이 완료되었습니다."
+                        const msg = response.data.message;
+                        if (response.status === 200 && msg === "인물 감지와 클러스터링이 완료되었습니다.") {
                             setRepresentativeImages(response.data.image_urls); // 이미지 URL 배열 저장
 
                             sessionStorage.setItem("image_s3_urls", JSON.stringify(response.data.image_urls));
+                        } else if (msg === "클러스터링된 인물이 존재하지 않습니다.") {
+                            alert("클러스터링 된 인물이 존재하지 않습니다. 조금 더 긴 길이의 비디오를 업로드해주세요.");
+                            navigate("/");
                         }
                     })
                     .catch((error) => {
@@ -136,8 +141,6 @@ const PSelection = () => {
         }
         return url; // YouTube가 아닐 경우 원래 URL 반환
     };
-
-    const navigate = useNavigate();
 
     const handleCompleteSelection = () => {
         console.log("선택된 사용자들:", selectedUsers);
@@ -165,7 +168,7 @@ const PSelection = () => {
                 console.log("서버 응답:", response.data);
                 if (response.data.status === "no_highlight") {
                     alert("추출된 하이라이트가 없습니다. 더 긴 영상의 비디오를 업로드해주세요.");
-                    navigate("/main");
+                    navigate("/");
                 }
                 else if (response.data.status === "success") {
                     console.log(response.data.sorted_highlights);
