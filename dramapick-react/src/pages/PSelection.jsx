@@ -128,7 +128,7 @@ const PSelection = () => {
                     });
                 }
             }
-    }, [s3Url, taskId, representativeImages.length]);
+    }, [s3Url, taskId, representativeImages.length, navigate]);
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
