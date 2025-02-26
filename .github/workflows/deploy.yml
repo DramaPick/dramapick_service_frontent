@@ -39,4 +39,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://ladiolus-bucket  # 본인의 S3 버킷 이름으로 변경
+            build s3://test-fastapi-bucket  # 본인의 S3 버킷 이름으로 변경
