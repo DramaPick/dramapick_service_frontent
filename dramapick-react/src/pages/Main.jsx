@@ -6,27 +6,46 @@ import uploadIcon from "../assets/upload_icon.png";
 import Button from "../components/Button";
 
 const Main = () => {
-    const inputEl = useRef(null);
-    const [fileName, setFileName] = useState("");
-    const fileInputHandler = useCallback((event) => {
-        const files = event.target && event.target.files;
-        if (files && files[0]) {
-        setFileName(event.target.files[0].name);
-        }
-    }, []);
-    const [videoFile, setVideoFile] = useState(null);
-    const [videoUrl, setVideoUrl] = useState('');
-    const [dramaTitle, setDramaTitle] = useState('');
-    const [error, setError] = useState('');
+  const inputEl = useRef(null);
+  const [fileName, setFileName] = useState("");
+  const [videoFile, setVideoFile] = useState(null);
+  // eslint-disable-next-line
+  const [videoUrl, setVideoUrl] = useState("");
+  const [dramaTitle, setDramaTitle] = useState("");
+  const [error, setError] = useState("");
 
+  // eslint-disable-next-line
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
-    const handleFileChange = useCallback ((e)=> {
-        setVideoFile(e.target.files[0]);
-        const files = e.target && e.target.files;
-        if (files && files[0]) {
-            setFileName(e.target.files[0].name);
+  const EC2_public_IP = "43.203.198.88";
+
+  const handleFileChange = useCallback((e) => {
+    const files = e.target && e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['mov', 'mp4'];
+
+      console.log("fileExtension: ", fileExtension);
+
+      if (allowedExtensions.includes(fileExtension)) {
+        setVideoFile(file);
+        setFileName(file.name);
+      } else {
+        alert('지원하지 않는 파일 형식입니다. .mov 또는 .mp4 파일을 업로드해주세요.');
+        setVideoFile(null);
+        setFileName('');
+        if (inputEl.current) {
+          inputEl.current.value = '';
         }
-    }, []);
+      }
+    } else {
+      setVideoFile(null);
+      setFileName('');
+    }
+  }, []);
 
   useEffect(() => {
     sessionStorage.clear(); // ✅ 세션 스토리지 초기화
@@ -131,12 +150,12 @@ const Main = () => {
     useEffect(() => {
         const currentInputEl = inputEl.current;
         if (currentInputEl !== null) {
-            currentInputEl.addEventListener("input", fileInputHandler);
+            currentInputEl.addEventListener("input", handleFileChange);
         }
         return () => {
-            currentInputEl && currentInputEl.removeEventListener("input", fileInputHandler);
+            currentInputEl && currentInputEl.removeEventListener("input", handleFileChange);
         };
-    }, [inputEl, fileInputHandler]);
+    }, [inputEl, handleFileChange]);
 
 
   return (
