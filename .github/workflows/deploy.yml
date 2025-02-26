@@ -50,10 +50,13 @@ jobs:
           echo "REACT_APP_AWS_SEC=${{ secrets.REACT_APP_AWS_SEC }}" >> .env  # AWS 비밀 키 추가
           echo "REACT_APP_AWS_BUCKET=${{ secrets.REACT_APP_AWS_BUCKET }}" >> .env  # S3 버킷 이름 추가
 
+      - name: Set up AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ap-northeast-2
+
       - name: Deploy to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS 접근 키
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS 비밀 접근 키
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
           aws s3 cp \
