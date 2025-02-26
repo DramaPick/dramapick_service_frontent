@@ -25,6 +25,8 @@ const PSelection = () => {
     // eslint-disable-next-line
     const [error, setError] = useState("");  // 오류 처리
 
+    const EC2_public_IP = "43.203.198.88";  // EC2 퍼블릭 IP
+
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
         if (location.state) {
@@ -107,7 +109,7 @@ const PSelection = () => {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
                 axios
-                    .get("http://127.0.0.1:8000/person/dc", {
+                    .get(`http://${EC2_public_IP}:8000/person/dc`, {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -155,7 +157,7 @@ const PSelection = () => {
         setShowAlert(true); 
 
         axios
-            .post(`http://127.0.0.1:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+            .post(`http://${EC2_public_IP}:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json",
                 },

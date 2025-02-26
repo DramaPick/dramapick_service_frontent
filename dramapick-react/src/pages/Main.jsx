@@ -19,6 +19,8 @@ const Main = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
+  const EC2_public_IP = "43.203.198.88";  // EC2 퍼블릭 IP
+
   const handleFileChange = useCallback((e) => {
     const files = e.target && e.target.files;
     if (files && files[0]) {
@@ -80,7 +82,7 @@ const Main = () => {
 
     // 드라마 타이틀 기반 크롤링 
     try {
-      const response = await axios.get("http://127.0.0.1:8000/search", {
+      const response = await axios.get(`http://${EC2_public_IP}:8000/search`, {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -108,7 +110,7 @@ const Main = () => {
     setShowAlert(true); 
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/upload', formData, {
+      const response = await axios.post(`http://${EC2_public_IP}:8000/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
