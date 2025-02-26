@@ -101,7 +101,7 @@ const ShortsDown = () => {
             
             if (adApiCallRef.current === 0 && adjustedHighlights.length === 0) {
                 axios
-                    .post(`http://${EC2_public_IP}:8000/highlight/adjust`, {
+                    .post(`${EC2_public_IP}:8000/highlight/adjust`, {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         highlights: sortedHighlights, // sortedHighlights 배열
@@ -139,7 +139,7 @@ const ShortsDown = () => {
             
             if (finalApiCall.current === 0 && finalShortsS3Url.length === 0) {
                 axios
-                    .post(`http://${EC2_public_IP}:8000/highlights/save`, {
+                    .post(`${EC2_public_IP}:8000/highlights/save`, {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         drama_title: dramaTitle,
@@ -209,7 +209,7 @@ const ShortsDown = () => {
             console.log("name : " + encodedFileName);
 
             try {
-                const response = await axios.get(`http://${EC2_public_IP}:8000/download_shorts?file_name=${encodedFileName}`, {
+                const response = await axios.get(`${EC2_public_IP}:8000/download_shorts?file_name=${encodedFileName}`, {
                     responseType: 'blob',
                     onDownloadProgress: (progressEvent) => {
                         if (progressEvent.total) {
@@ -251,7 +251,7 @@ const ShortsDown = () => {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName: ", selectedFileName);
 
-            const response = await axios.post(`http://${EC2_public_IP}:8000/highlight/title`, null, {
+            const response = await axios.post(`${EC2_public_IP}:8000/highlight/title`, null, {
                 params: { org_title: shortsTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 추출 완료") {
@@ -278,7 +278,7 @@ const ShortsDown = () => {
         try {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName 222 : ", selectedFileName);
-            const response = await axios.post(`http://${EC2_public_IP}:8000/submit/title`, null, {
+            const response = await axios.post(`${EC2_public_IP}:8000/submit/title`, null, {
                 params: {selected_title: selectedTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 삽입 완료") {

@@ -109,7 +109,7 @@ const PSelection = () => {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
                 axios
-                    .get(`http://${EC2_public_IP}:8000/person/dc`, {
+                    .get(`${EC2_public_IP}:8000/person/dc`, {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -157,7 +157,7 @@ const PSelection = () => {
         setShowAlert(true); 
 
         axios
-            .post(`http://${EC2_public_IP}:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+            .post(`${EC2_public_IP}:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json",
                 },
