@@ -126,7 +126,7 @@ const ShortsDown = () => {
                 );
             } 
         }
-    }, [sortedHighlights, s3Url, taskId, dramaTitle, adjustedHighlights]);
+    }, [sortedHighlights, s3Url, taskId, dramaTitle, adjustedHighlights, EC2_public_IP]);
 
     const finalApiCall = useRef(0);
     useEffect(() => {
@@ -163,7 +163,7 @@ const ShortsDown = () => {
                     });
             }
         }
-    }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights, finalShortsS3Url]);
+    }, [adjustedHighlights, s3Url, taskId, dramaTitle, sortedHighlights, finalShortsS3Url, EC2_public_IP]);
 
     const handleCheckboxChange = (fileName, shortsNum, isChecked) => {
         setSelectedVideos((prevSelected) => {

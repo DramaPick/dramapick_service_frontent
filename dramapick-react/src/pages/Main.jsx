@@ -29,7 +29,6 @@ const Main = () => {
       const allowedExtensions = ['mov', 'mp4'];
 
       console.log("fileExtension: ", fileExtension);
-      console.log("Request URL:", `http://${EC2_public_IP}:8000/`);
 
       if (allowedExtensions.includes(fileExtension)) {
         setVideoFile(file);
@@ -81,7 +80,7 @@ const Main = () => {
     console.log('비디오 파일:', videoFile);
     console.log('비디오 URL:', videoUrl);
 
-    console.log("EC2 public IP:", EC2_public_IP);
+    console.log("EC2_public_IP: ", EC2_public_IP);
 
     // 드라마 타이틀 기반 크롤링 
     try {

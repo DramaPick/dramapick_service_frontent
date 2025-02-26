@@ -130,7 +130,7 @@ const PSelection = () => {
                     });
                 }
             }
-    }, [s3Url, taskId, representativeImages.length, navigate]);
+    }, [s3Url, taskId, representativeImages.length, navigate, EC2_public_IP]);
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
