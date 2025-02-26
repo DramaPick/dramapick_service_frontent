@@ -84,7 +84,7 @@ const Main = () => {
 
     // 드라마 타이틀 기반 크롤링 
     try {
-      const response = await axios.get(`${EC2_public_IP}:8000/search`, {
+      const response = await axios.get(`${EC2_public_IP}/search`, {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -112,7 +112,7 @@ const Main = () => {
     setShowAlert(true); 
 
     try {
-      const response = await axios.post(`${EC2_public_IP}:8000/upload`, formData, {
+      const response = await axios.post(`${EC2_public_IP}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
