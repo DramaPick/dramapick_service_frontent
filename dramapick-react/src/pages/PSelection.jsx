@@ -25,7 +25,7 @@ const PSelection = () => {
     // eslint-disable-next-line
     const [error, setError] = useState("");  // 오류 처리
 
-    const EC2_public_IP = process.env.REACT_APP_API_URL;
+    const EC2_public_IP = process.env.REACT_APP_API_URL || "http://43.203.198.88:8000";
 
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
