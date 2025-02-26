@@ -80,6 +80,8 @@ const Main = () => {
     console.log('비디오 파일:', videoFile);
     console.log('비디오 URL:', videoUrl);
 
+    console.log("EC2 public IP:", EC2_public_IP);
+
     // 드라마 타이틀 기반 크롤링 
     try {
       const response = await axios.get(`http://${EC2_public_IP}:8000/search`, {
