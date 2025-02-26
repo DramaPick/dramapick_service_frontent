@@ -110,16 +110,24 @@ const Main = () => {
     setIsUploading(true);
     setShowAlert(true); 
 
+    console.log("-- formData: ", formData);
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]); // key와 value 출력
+    }
+
     try {
       const response = await axios.post(`${EC2_public_IP}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
             const percent = Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total);
             setUploadProgress(percent);
           }
         },
-      });
-
+      }
+    );
       console.log('Response from server:', response.data);
 
       const { task_id, status, s3_url } = response.data;
