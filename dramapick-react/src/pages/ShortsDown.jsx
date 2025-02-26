@@ -29,7 +29,7 @@ const ShortsDown = () => {
     const [errorMessageForOpenModal, setErrorMessageForOpenModal] = useState("");
     const [isLoading, setIsLoading] = useState(false); // 진행 상태 추가
 
-    const EC2_public_IP = "43.203.198.88";  // EC2 퍼블릭 IP
+    const EC2_public_IP = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         if (location.state) {

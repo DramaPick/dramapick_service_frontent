@@ -19,7 +19,7 @@ const Main = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const EC2_public_IP = "43.203.198.88";
+  const EC2_public_IP = process.env.REACT_APP_API_URL;
 
   const handleFileChange = useCallback((e) => {
     const files = e.target && e.target.files;
@@ -29,6 +29,7 @@ const Main = () => {
       const allowedExtensions = ['mov', 'mp4'];
 
       console.log("fileExtension: ", fileExtension);
+      console.log("Request URL:", `http://${EC2_public_IP}:8000/`);
 
       if (allowedExtensions.includes(fileExtension)) {
         setVideoFile(file);
