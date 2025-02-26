@@ -84,6 +84,8 @@ const Main = () => {
 
     // 드라마 타이틀 기반 크롤링 
     try {
+      // eslint-disable-next-line
+      console.log("${EC2_public_IP}/search: ", `${EC2_public_IP}/search`);
       const response = await axios.get(`${EC2_public_IP}/search`, {
         params: { drama_title: dramaTitle },
       });
@@ -116,7 +118,6 @@ const Main = () => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        maxRedirects: 0,
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
             const percent = Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total);

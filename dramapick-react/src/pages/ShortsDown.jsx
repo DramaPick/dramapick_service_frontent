@@ -28,7 +28,7 @@ const ShortsDown = () => {
     const [selectedTitle, setSelectedTitle] = useState(""); // 선택한 최종 쇼츠 제목 저장
     const [errorMessageForOpenModal, setErrorMessageForOpenModal] = useState("");
     const [isLoading, setIsLoading] = useState(false); // 진행 상태 추가
-
+    
     const EC2_public_IP = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
