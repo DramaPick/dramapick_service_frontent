@@ -105,9 +105,6 @@ const Main = () => {
     if (videoFile) {
       formData.append('file', videoFile);
     }
-    if (videoUrl) {
-      formData.append('videoUrl', videoUrl);
-    }
     formData.append('dramaTitle', dramaTitle);
 
     setIsUploading(true);
@@ -115,9 +112,6 @@ const Main = () => {
 
     try {
       const response = await axios.post(`${EC2_public_IP}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
             const percent = Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total);
