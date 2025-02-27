@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
 import styles from "../styles/PSelection.module.css";
-import axios from "axios";
+import api from "../api";
 
 const PSelection = () => {
     const location = useLocation(); // location 훅으로 상태 가져오기
@@ -24,8 +24,6 @@ const PSelection = () => {
 
     // eslint-disable-next-line
     const [error, setError] = useState("");  // 오류 처리
-
-    const EC2_public_IP = process.env.REACT_APP_API_URL || "http://43.203.198.88:8000";
 
     // useEffect로 videoFile과 videoUrl을 한번만 설정
     useEffect(() => {
@@ -108,8 +106,7 @@ const PSelection = () => {
         if (s3Url && taskId) {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
-                axios
-                    .get(`${EC2_public_IP}/person/dc`, {
+                api.get("/person/dc", {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -130,7 +127,7 @@ const PSelection = () => {
                     });
                 }
             }
-    }, [s3Url, taskId, representativeImages.length, navigate, EC2_public_IP]);
+    }, [s3Url, taskId, representativeImages.length, navigate]);
 
     // eslint-disable-next-line
     const getEmbedUrl = (url) => {
@@ -156,8 +153,7 @@ const PSelection = () => {
         setIsProcessing(true);
         setShowAlert(true); 
 
-        axios
-            .post(`${EC2_public_IP}/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+        api.post(`/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json",
                 },

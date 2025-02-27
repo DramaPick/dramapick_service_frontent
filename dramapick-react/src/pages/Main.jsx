@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import styles from "../styles/Main.module.css";
 import uploadIcon from "../assets/upload_icon.png";
 import Button from "../components/Button";
+import api from "../api";
 
 const Main = () => {
   const inputEl = useRef(null);
@@ -18,8 +18,6 @@ const Main = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-
-  const EC2_public_IP = process.env.REACT_APP_API_URL || "http://43.203.198.88:8000";
 
   const handleFileChange = useCallback((e) => {
     const files = e.target && e.target.files;
@@ -79,14 +77,11 @@ const Main = () => {
     console.log('드라마 제목: ', dramaTitle);
     console.log('비디오 파일:', videoFile);
     console.log('비디오 URL:', videoUrl);
-
-    console.log("EC2_public_IP: ", EC2_public_IP);
-
+    
     // 드라마 타이틀 기반 크롤링 
     try {
       // eslint-disable-next-line
-      console.log("${EC2_public_IP}/search: ", `${EC2_public_IP}/search`);
-      const response = await axios.get(`${EC2_public_IP}/search`, {
+      const response = await api.get("/search", {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -116,7 +111,7 @@ const Main = () => {
     }
 
     try {
-      const response = await axios.post(`${EC2_public_IP}/upload`, formData, {
+      const response = await api.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
