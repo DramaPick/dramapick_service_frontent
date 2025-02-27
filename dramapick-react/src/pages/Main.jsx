@@ -113,9 +113,7 @@ const Main = () => {
     try {
       const response = await api.post("/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": `http://dramapick-deploy-test.s3-website.ap-northeast-2.amazonaws.com`,
-          "Access-Control-Allow-Credentials": "true",
+          "Content-Type": "multipart/form-data"
         },
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
