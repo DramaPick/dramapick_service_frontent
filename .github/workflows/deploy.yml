@@ -37,6 +37,9 @@ jobs:
           REACT_APP_AWS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
           REACT_APP_AWS_SEC=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           REACT_APP_AWS_BUCKET=${{ secrets.AWS_BUCKET_NAME }}
+          WDS_SOCKET_HOST=0.0.0.0
+          WDS_SOCKET_PATH=/ws
+          WDS_SOCKET_PORT=443
           EO
 
       - name: Build React app
