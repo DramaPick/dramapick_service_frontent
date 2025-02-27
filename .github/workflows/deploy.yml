@@ -27,38 +27,33 @@ jobs:
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
           npm install  # 필요한 의존성을 설치
 
-      - name: Build React app
-        run: |
-          cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
-          npm run build  # React 애플리케이션을 빌드
-
       - name: Create .env file with environment variables
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
 
+          # 기존 .env 삭제 (깨끗한 상태 유지)
+          rm -f .env  
+
           touch .env  
 
-          # 환경 변수들이 이미 존재하지 않는 경우에만 추가
-          if ! grep -q "REACT_APP_AWS_REG" .env; then
-            echo "REACT_APP_AWS_REG=ap-northeast-2" >> .env  # AWS 지역 변수 추가
-          fi
-
-          if ! grep -q "REACT_APP_API_URL" .env; then
-            echo "REACT_APP_API_URL=http://43.203.198.88" >> .env  # EC2 API URL 추가
-          fi
+          # 환경 변수 추가
+          echo "REACT_APP_AWS_REG=ap-northeast-2" >> .env  # AWS 지역 변수 추가
+          echo "REACT_APP_API_URL=http://43.203.198.88:8000" >> .env  # EC2 API URL 추가
 
           # GitHub Secrets에서 가져오는 값들
           echo "REACT_APP_AWS_KEY=${{ secrets.REACT_APP_AWS_KEY }}" >> .env  # AWS 접근 키 추가
           echo "REACT_APP_AWS_SEC=${{ secrets.REACT_APP_AWS_SEC }}" >> .env  # AWS 비밀 키 추가
           echo "REACT_APP_AWS_BUCKET=${{ secrets.REACT_APP_AWS_BUCKET }}" >> .env  # S3 버킷 이름 추가
 
-      - name: Set up AWS credentials
+      - name: Build React app
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ap-northeast-2
+          cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
+          npm run build  # React 애플리케이션을 빌드
 
       - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
           aws s3 cp \
