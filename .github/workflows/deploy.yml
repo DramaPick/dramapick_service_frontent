@@ -31,19 +31,13 @@ jobs:
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
 
-          # 기존 .env 삭제 (깨끗한 상태 유지)
-          rm -f .env  
-
-          touch .env  
-
-          # 환경 변수 추가
-          echo "REACT_APP_AWS_REG=ap-northeast-2" >> .env  # AWS 지역 변수 추가
-          echo "REACT_APP_API_URL=http://43.203.198.88:8000" >> .env  # EC2 API URL 추가
-
-          # GitHub Secrets에서 가져오는 값들
-          echo "REACT_APP_AWS_KEY=${{ secrets.REACT_APP_AWS_KEY }}" >> .env  # AWS 접근 키 추가
-          echo "REACT_APP_AWS_SEC=${{ secrets.REACT_APP_AWS_SEC }}" >> .env  # AWS 비밀 키 추가
-          echo "REACT_APP_AWS_BUCKET=${{ secrets.REACT_APP_AWS_BUCKET }}" >> .env  # S3 버킷 이름 추가
+          cat <<EOF > .env
+          REACT_APP_AWS_REG=${{ secrets.REACT_APP_AWS_REG }}
+          REACT_APP_API_URL=${{ secrets.BACK_API_URL }}
+          REACT_APP_AWS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
+          REACT_APP_AWS_SEC=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          REACT_APP_AWS_BUCKET=${{ secrets.AWS_BUCKET_NAME }}
+          EO
 
       - name: Build React app
         run: |
@@ -59,4 +53,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://${{ secrets.REACT_APP_AWS_BUCKET }}  # 환경 변수로 설정된 S3 버킷에 업로드
+            build s3://${{ secrets.AWS_BUCKET_NAME }}  # 환경 변수로 설정된 S3 버킷에 업로드
