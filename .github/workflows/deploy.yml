@@ -36,6 +36,8 @@ jobs:
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
 
+          touch .env  
+
           # 환경 변수들이 이미 존재하지 않는 경우에만 추가
           if ! grep -q "REACT_APP_AWS_REG" .env; then
             echo "REACT_APP_AWS_REG=ap-northeast-2" >> .env  # AWS 지역 변수 추가
