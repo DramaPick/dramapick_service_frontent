@@ -113,7 +113,8 @@ const Main = () => {
     try {
       const response = await api.post("/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
+          "Accept": "application/json"
         },
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
