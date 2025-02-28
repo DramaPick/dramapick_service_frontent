@@ -121,8 +121,8 @@ const Main = () => {
             setUploadProgress(percent);
           }
         },
-      }
-    );
+      });
+      
       console.log('Response from server:', response.data);
 
       const { task_id, status, s3_url } = response.data;
