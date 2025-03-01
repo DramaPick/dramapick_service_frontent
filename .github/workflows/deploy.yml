@@ -26,20 +26,16 @@ jobs:
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
           npm install  # 필요한 의존성을 설치
-          
+
       - name: Create .env file with environment variables
         run: |
           cd dramapick-react  # 'dramapick-react' 디렉토리로 이동
 
           cat <<EOF > .env
           REACT_APP_AWS_REG=${{ secrets.REACT_APP_AWS_REG }}
-          REACT_APP_API_URL=${{ secrets.BACK_API_URL }}
           REACT_APP_AWS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
           REACT_APP_AWS_SEC=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           REACT_APP_AWS_BUCKET=${{ secrets.AWS_BUCKET_NAME }}
-          WDS_SOCKET_HOST=0.0.0.0
-          WDS_SOCKET_PATH=/ws
-          WDS_SOCKET_PORT=443
           EO
 
       - name: Build React app
