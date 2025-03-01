@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Person from "../components/Person";
 import Button from "../components/Button";
 import styles from "../styles/PSelection.module.css";
-import api from "../api";
+import axios from "axios";
 
 const PSelection = () => {
     const location = useLocation(); // location 훅으로 상태 가져오기
@@ -106,7 +106,7 @@ const PSelection = () => {
         if (s3Url && taskId) {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
-                api.get("/person/dc", {
+                axios.get("https://dramapick.site/person/dc", {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -153,7 +153,7 @@ const PSelection = () => {
         setIsProcessing(true);
         setShowAlert(true); 
 
-        api.post(`/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+        axios.post(`https://dramapick.site/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json",
                 },

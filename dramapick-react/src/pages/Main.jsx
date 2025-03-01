@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Main.module.css";
 import uploadIcon from "../assets/upload_icon.png";
 import Button from "../components/Button";
-import api from "../api";
+import axios from "axios";
 
 const Main = () => {
   const inputEl = useRef(null);
@@ -81,7 +81,7 @@ const Main = () => {
     // 드라마 타이틀 기반 크롤링 
     try {
       // eslint-disable-next-line
-      const response = await api.get("/search", {
+      const response = await axios.get("https://dramapick.site/search", {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -111,7 +111,7 @@ const Main = () => {
     }
 
     try {
-      const response = await api.post("/upload", formData, {
+      const response = await axios.post("https://dramapick.site/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Accept": "application/json"

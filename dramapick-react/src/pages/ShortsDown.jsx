@@ -4,7 +4,7 @@ import styles from "../styles/ShortsDown.module.css";
 import Button from "../components/Button";
 import { useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
-import api from "../api";
+import axios from "axios";
 
 const ShortsDown = () => {
     const location = useLocation();
@@ -98,7 +98,7 @@ const ShortsDown = () => {
             console.log("adApiCallRef: ", adApiCallRef.current);
             
             if (adApiCallRef.current === 0 && adjustedHighlights.length === 0) {
-                api.post("/highlight/adjust", {
+                axios.post("https://dramapick.site/highlight/adjust", {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         highlights: sortedHighlights, // sortedHighlights 배열
@@ -135,7 +135,7 @@ const ShortsDown = () => {
             console.log("finalApiCall: ", finalApiCall.current);
             
             if (finalApiCall.current === 0 && finalShortsS3Url.length === 0) {
-                api.post("/highlights/save", {
+                axios.post("https://dramapick.site/highlights/save", {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         drama_title: dramaTitle,
@@ -205,7 +205,7 @@ const ShortsDown = () => {
             console.log("name : " + encodedFileName);
 
             try {
-                const response = await api.get(`/download_shorts?file_name=${encodedFileName}`, {
+                const response = await axios.get(`https://dramapick.site/download_shorts?file_name=${encodedFileName}`, {
                     responseType: 'blob',
                     onDownloadProgress: (progressEvent) => {
                         if (progressEvent.total) {
@@ -247,7 +247,7 @@ const ShortsDown = () => {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName: ", selectedFileName);
 
-            const response = await api.post("/highlight/title", null, {
+            const response = await axios.post("https://dramapick.site/highlight/title", null, {
                 params: { org_title: shortsTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 추출 완료") {
@@ -274,7 +274,7 @@ const ShortsDown = () => {
         try {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName 222 : ", selectedFileName);
-            const response = await api.post("/submit/title", null, {
+            const response = await axios.post("https://dramapick.site/submit/title", null, {
                 params: {selected_title: selectedTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 삽입 완료") {
