@@ -106,7 +106,7 @@ const PSelection = () => {
         if (s3Url && taskId) {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
-                axios.get("https://x1yim80pni.execute-api.ap-northeast-2.amazonaws.com/api/person/dc", {
+                axios.get("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/person/dc", {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -153,7 +153,7 @@ const PSelection = () => {
         setIsProcessing(true);
         setShowAlert(true); 
 
-        axios.post(`https://x1yim80pni.execute-api.ap-northeast-2.amazonaws.com/api/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
+        axios.post(`https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json",
                 },

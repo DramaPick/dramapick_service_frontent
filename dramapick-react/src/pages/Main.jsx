@@ -81,7 +81,7 @@ const Main = () => {
     // 드라마 타이틀 기반 크롤링 
     try {
       // eslint-disable-next-line
-      const response = await axios.get("https://x1yim80pni.execute-api.ap-northeast-2.amazonaws.com/api/search", {
+      const response = await axios.get("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/search", {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -111,7 +111,7 @@ const Main = () => {
     }
 
     try {
-      const response = await axios.post("https://x1yim80pni.execute-api.ap-northeast-2.amazonaws.com/api/upload", formData, {
+      const response = await axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Accept": "application/json"
