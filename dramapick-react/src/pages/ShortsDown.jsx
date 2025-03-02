@@ -98,14 +98,10 @@ const ShortsDown = () => {
             console.log("adApiCallRef: ", adApiCallRef.current);
             
             if (adApiCallRef.current === 0 && adjustedHighlights.length === 0) {
-                axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/highlight/adjust", {
+                axios.post("http://54.180.127.248:8000/highlight/adjust", {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         highlights: sortedHighlights, // sortedHighlights 배열
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json", // JSON 형식으로 전송
-                        },
                     })
                     .then((response) => {
                         if (response.status === 200) {
@@ -135,7 +131,7 @@ const ShortsDown = () => {
             console.log("finalApiCall: ", finalApiCall.current);
             
             if (finalApiCall.current === 0 && finalShortsS3Url.length === 0) {
-                axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/highlights/save", {
+                axios.post("http://54.180.127.248:8000/highlights/save", {
                         s3_url: s3Url, // s3_url 문자열
                         task_id: taskId, // task_id 문자열
                         drama_title: dramaTitle,
@@ -205,7 +201,7 @@ const ShortsDown = () => {
             console.log("name : " + encodedFileName);
 
             try {
-                const response = await axios.get(`https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/download_shorts?file_name=${encodedFileName}`, {
+                const response = await axios.get(`http://54.180.127.248:8000/download_shorts?file_name=${encodedFileName}`, {
                     responseType: 'blob',
                     onDownloadProgress: (progressEvent) => {
                         if (progressEvent.total) {
@@ -247,7 +243,7 @@ const ShortsDown = () => {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName: ", selectedFileName);
 
-            const response = await axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/highlight/title", null, {
+            const response = await axios.post("http://54.180.127.248:8000/highlight/title", null, {
                 params: { org_title: shortsTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 추출 완료") {
@@ -274,7 +270,7 @@ const ShortsDown = () => {
         try {
             const selectedFileName = selectedVideos[0].fileName;
             console.log("selectedFileName 222 : ", selectedFileName);
-            const response = await axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/submit/title", null, {
+            const response = await axios.post("http://54.180.127.248:8000/submit/title", null, {
                 params: {selected_title: selectedTitle, file_name: selectedFileName},
             });
             if (response.data.message === "title 삽입 완료") {

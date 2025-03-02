@@ -106,7 +106,7 @@ const PSelection = () => {
         if (s3Url && taskId) {
             console.log("Pselection.jsx ---> representativeImages: ", representativeImages.length);
             if (representativeImages.length === 0) {
-                axios.get("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/person/dc", {
+                axios.get("http://54.180.127.248:8000/person/dc", {
                         params: {
                             s3_url: s3Url,
                             task_id: taskId,
@@ -153,10 +153,7 @@ const PSelection = () => {
         setIsProcessing(true);
         setShowAlert(true); 
 
-        axios.post(`https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        axios.post(`http://54.180.127.248:8000/api/videos/${postVideoId}/actors/select`, JSON.stringify(data), {
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                     setActorProgress(percentCompleted);
