@@ -114,7 +114,6 @@ const Main = () => {
       const response = await axios.post("https://0k6m4u1tdj.execute-api.us-east-1.amazonaws.com/api/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Accept": "application/json"
         },
         onUploadProgress: (ProgressEvent) => {
           if (ProgressEvent.total) {
