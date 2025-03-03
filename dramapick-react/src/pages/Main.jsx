@@ -81,7 +81,7 @@ const Main = () => {
     // 드라마 타이틀 기반 크롤링 
     try {
       // eslint-disable-next-line
-      const response = await axios.get("http://54.180.127.248:8000/search", {
+      const response = await axios.get("https://api.dramapick.site/search", {
         params: { drama_title: dramaTitle },
       });
       console.log("검색 결과:", response.data);
@@ -111,7 +111,7 @@ const Main = () => {
     }
 
     try {
-      const response = await axios.post("http://54.180.127.248:8000/upload", formData, {
+      const response = await axios.post("https://api.dramapick.site/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
